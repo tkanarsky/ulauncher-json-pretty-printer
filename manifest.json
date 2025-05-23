@@ -1,0 +1,26 @@
+{
+  "required_api_version": "2",
+  "name": "JSON Pretty-printer",
+  "description": "Pretty-print JSON",
+  "developer_name": "tkanarsky",
+  "icon": "images/icon.png",
+  "options": {
+    "query_debounce": 0.1
+  },
+  "preferences": [
+    {
+      "id": "jpp_kw",
+      "type": "keyword",
+      "name": "JSON Pretty-printer",
+      "description": "Pretty-print JSON",
+      "default_value": "jpp"
+    },
+    {
+      "id": "indent",
+      "type": "input",
+      "name": "Indentation",
+      "description": "Number of spaces for indentation (0-8)",
+      "default_value": "2"
+    }
+  ]
+}

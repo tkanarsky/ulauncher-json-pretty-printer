@@ -16,6 +16,13 @@
       "default_value": "jpp"
     },
     {
+      "id": "jmm_kw",
+      "type": "keyword",
+      "name": "JSON Minifier",
+      "description": "Minify JSON",
+      "default_value": "jmm"
+    },
+    {
       "id": "indent",
       "type": "input",
       "name": "Indentation",

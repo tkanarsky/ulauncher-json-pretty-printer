@@ -26,6 +26,10 @@ class KeywordQueryEventListener(EventListener):
         # Get user input (query argument)
         input_text = event.get_argument() or ""
         
+        # Determine if this is minify mode based on keyword
+        keyword = event.get_keyword()
+        is_minify = keyword == extension.preferences.get('jmm_kw', 'jmm')
+        
         # Get user preferences
         try:
             indent_size = int(extension.preferences.get('indent', '2'))
@@ -38,25 +42,39 @@ class KeywordQueryEventListener(EventListener):
         
         # If no input provided, show usage instructions
         if not input_text.strip():
-            items.append(ExtensionResultItem(
-                icon='images/icon.png',
-                name='JSON Pretty-printer',
-                description='Enter JSON string to format, e.g {"foo":"bar","baz":42}',
-                on_enter=HideWindowAction()
-            ))
+            if is_minify:
+                items.append(ExtensionResultItem(
+                    icon='images/icon.png',
+                    name='JSON Minifier',
+                    description='Enter JSON string to minify, e.g {"foo": "bar", "baz": 42}',
+                    on_enter=HideWindowAction()
+                ))
+            else:
+                items.append(ExtensionResultItem(
+                    icon='images/icon.png',
+                    name='JSON Pretty-printer',
+                    description='Enter JSON string to format, e.g {"foo":"bar","baz":42}',
+                    on_enter=HideWindowAction()
+                ))
             return RenderResultListAction(items)
         
         try:
             # Try to parse the JSON
             parsed_json = json.loads(input_text.strip())
             
-            # Format with pretty printing
-            formatted_json = json.dumps(parsed_json, indent=indent_size, ensure_ascii=False, sort_keys=True)
+            if is_minify:
+                # Format as minified JSON
+                formatted_json = json.dumps(parsed_json, separators=(',', ':'), ensure_ascii=False, sort_keys=True)
+                action_name = 'Copy minified JSON'
+            else:
+                # Format with pretty printing
+                formatted_json = json.dumps(parsed_json, indent=indent_size, ensure_ascii=False, sort_keys=True)
+                action_name = 'Copy pretty-printed JSON'
             
             # Show the formatted result
             items.append(ExtensionResultItem(
                 icon='images/icon.png',
-                name='Copy pretty-printed JSON',
+                name=action_name,
                 description=self._truncate_text(formatted_json, 100),
                 on_enter=CopyToClipboardAction(formatted_json)
             ))
